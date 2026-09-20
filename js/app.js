@@ -1,4 +1,4 @@
-// Emil Kowalski Inspired Application Logic for "M and H" Portfolio
+// Application Logic for "M and H" Portfolio
 (function () {
   function init() {
     // State
@@ -7,8 +7,13 @@
     let authorFilter = null;
     let bookmarkedIds = JSON.parse(localStorage.getItem("mandh_bookmarks") || "[]");
     let clappedIds = JSON.parse(localStorage.getItem("mandh_claps") || "{}");
+    let activeArticleId = null;
 
-    // DOM Elements
+    // Main Views
+    const homePageView = document.getElementById("home-page-view");
+    const articlePageView = document.getElementById("article-page-view");
+
+    // Elements
     const blogGrid = document.getElementById("blog-grid");
     const categoryFilters = document.getElementById("category-filters");
     const searchInput = document.getElementById("search-input");
@@ -16,63 +21,119 @@
     const postsCountBadge = document.getElementById("posts-count-badge");
     const emptyState = document.getElementById("empty-state");
     const resetFiltersBtn = document.getElementById("reset-filters-btn");
-
-    // Modal Elements
-    const articleModal = document.getElementById("article-modal");
-    const modalCloseBtn = document.getElementById("modal-close-btn");
-    const modalCategory = document.getElementById("modal-category");
-    const modalTitle = document.getElementById("modal-title");
-    const modalDate = document.getElementById("modal-date");
-    const modalReadTime = document.getElementById("modal-read-time");
-    const modalAuthorAvatar = document.getElementById("modal-author-avatar");
-    const modalAuthorName = document.getElementById("modal-author-name");
-    const modalAuthorRole = document.getElementById("modal-author-role");
-    const modalCover = document.getElementById("modal-cover");
-    const modalTags = document.getElementById("modal-tags");
-    const modalContent = document.getElementById("modal-content");
-    const modalClapBtn = document.getElementById("modal-clap-btn");
-    const modalClapCount = document.getElementById("modal-clap-count");
-    const modalCopyLinkBtn = document.getElementById("modal-copy-link-btn");
-    let activeModalArticleId = null;
-
-    // Hero
     const heroFeaturedCard = document.getElementById("hero-featured-card");
+
+    // Article Page Elements
+    const articleBackBtn = document.getElementById("article-back-btn");
+    const pageArticleCategory = document.getElementById("page-article-category");
+    const pageArticleTitle = document.getElementById("page-article-title");
+    const pageArticleDate = document.getElementById("page-article-date");
+    const pageArticleReadtime = document.getElementById("page-article-readtime");
+    const pageArticleAuthorAvatar = document.getElementById("page-article-author-avatar");
+    const pageArticleAuthorName = document.getElementById("page-article-author-name");
+    const pageArticleAuthorRole = document.getElementById("page-article-author-role");
+    const pageArticleCover = document.getElementById("page-article-cover");
+    const pageArticleTags = document.getElementById("page-article-tags");
+    const pageArticleContent = document.getElementById("page-article-content");
+    const pageArticleClapBtn = document.getElementById("page-article-clap-btn");
+    const pageArticleClapCount = document.getElementById("page-article-clap-count");
+    const pageArticleShareBtn = document.getElementById("page-article-share-btn");
 
     // Theme Switcher
     const themeToggleBtn = document.getElementById("theme-toggle-btn");
     const themeIconDark = document.getElementById("theme-icon-dark");
     const themeIconLight = document.getElementById("theme-icon-light");
 
-    // Mobile Navigation
+    // Navigation
     const mobileMenuBtn = document.getElementById("mobile-menu-btn");
     const mobileMenuDrawer = document.getElementById("mobile-menu-drawer");
-
-    // Forms
+    const brandLogoLink = document.getElementById("brand-logo-link");
     const newsletterForm = document.getElementById("newsletter-form");
     const contactForm = document.getElementById("contact-form");
     const toastContainer = document.getElementById("toast-container");
-
-    // Progress Bar
     const readingProgressBar = document.getElementById("reading-progress-bar");
 
-    // Initialize Components
+    // Initialize
     initTheme();
     initCategories();
     renderFeaturedStory();
     renderArticles();
     bindEvents();
+    checkHashRoute();
 
     // -------------------------------------------------------------
-    // Sonner-Style Toast System
+    // View Switcher: Home View vs Dedicated Article Page View
+    // -------------------------------------------------------------
+    function showHomePage() {
+      if (articlePageView) articlePageView.classList.add("hidden");
+      if (homePageView) homePageView.classList.remove("hidden");
+      activeArticleId = null;
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    function showArticlePage(id) {
+      const post = blogPosts.find((p) => p.id === id);
+      if (!post || !articlePageView) return;
+
+      activeArticleId = id;
+      const author = authorsData[post.authorKey] || authorsData.duo;
+      const dynamicClaps = (clappedIds[post.id] || 0) + post.claps;
+
+      if (pageArticleCategory) pageArticleCategory.textContent = post.category;
+      if (pageArticleTitle) pageArticleTitle.textContent = post.title;
+      if (pageArticleDate) pageArticleDate.textContent = post.publishedDate;
+      if (pageArticleReadtime) pageArticleReadtime.textContent = post.readTime;
+      if (pageArticleAuthorAvatar) {
+        pageArticleAuthorAvatar.src = author.avatar;
+        pageArticleAuthorAvatar.alt = author.name;
+      }
+      if (pageArticleAuthorName) pageArticleAuthorName.textContent = author.name;
+      if (pageArticleAuthorRole) pageArticleAuthorRole.textContent = author.role;
+      if (pageArticleCover) {
+        pageArticleCover.src = post.coverImage;
+        pageArticleCover.alt = post.title;
+      }
+      if (pageArticleClapCount) pageArticleClapCount.textContent = dynamicClaps;
+
+      if (pageArticleTags) {
+        pageArticleTags.innerHTML = post.tags
+          .map(
+            (tag) => `
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700">
+              #${tag}
+            </span>
+          `
+          )
+          .join("");
+      }
+
+      if (pageArticleContent) pageArticleContent.innerHTML = post.content;
+
+      // Switch screens
+      if (homePageView) homePageView.classList.add("hidden");
+      articlePageView.classList.remove("hidden");
+
+      window.scrollTo({ top: 0, behavior: "instant" });
+      window.location.hash = `#article/${id}`;
+    }
+
+    function checkHashRoute() {
+      const hash = window.location.hash;
+      if (hash.startsWith("#article/")) {
+        const id = hash.replace("#article/", "");
+        showArticlePage(id);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Toast Notifications
     // -------------------------------------------------------------
     function showToast(message, type = "info") {
       if (!toastContainer) return;
-
       const toast = document.createElement("div");
       toast.className = `
-        toast-sonner flex items-center gap-3 px-4 py-3 rounded-xl 
-        bg-[#12131e]/90 backdrop-blur-xl border border-white/10 shadow-2xl 
-        text-xs font-medium transition-all duration-300 transform translate-y-4 opacity-0
+        px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-700 shadow-2xl 
+        text-xs font-medium flex items-center gap-3 transition-all duration-200 transform translate-y-2 opacity-0
       `;
 
       const dotColor =
@@ -83,24 +144,20 @@
           : "bg-violet-400";
 
       toast.innerHTML = `
-        <span class="w-2 h-2 rounded-full ${dotColor} shrink-0 animate-pulse"></span>
-        <span class="text-neutral-200 flex-1 leading-snug">${message}</span>
+        <span class="w-2 h-2 rounded-full ${dotColor} shrink-0"></span>
+        <span class="text-neutral-200">${message}</span>
       `;
 
       toastContainer.appendChild(toast);
 
-      // Trigger entrance frame
       requestAnimationFrame(() => {
-        toast.classList.remove("translate-y-4", "opacity-0");
-        toast.classList.add("translate-y-0", "opacity-100");
+        toast.classList.remove("translate-y-2", "opacity-0");
       });
 
-      // Exit after 2.8s
       setTimeout(() => {
-        toast.classList.remove("translate-y-0", "opacity-100");
         toast.classList.add("translate-y-2", "opacity-0");
-        setTimeout(() => toast.remove(), 300);
-      }, 2800);
+        setTimeout(() => toast.remove(), 200);
+      }, 2500);
     }
 
     // -------------------------------------------------------------
@@ -125,16 +182,16 @@
       if (isLight) {
         if (themeIconDark) themeIconDark.classList.remove("hidden");
         if (themeIconLight) themeIconLight.classList.add("hidden");
-        showToast("Switched to Light Mode", "info");
+        showToast("Switched to Light Theme", "info");
       } else {
         if (themeIconDark) themeIconDark.classList.add("hidden");
         if (themeIconLight) themeIconLight.classList.remove("hidden");
-        showToast("Switched to Dark Obsidian Mode", "info");
+        showToast("Switched to Dark Theme", "info");
       }
     }
 
     // -------------------------------------------------------------
-    // Categories
+    // Category & Search Filters
     // -------------------------------------------------------------
     function initCategories() {
       if (!categoryFilters) return;
@@ -143,10 +200,10 @@
           (cat) => `
           <button 
             data-category="${cat}"
-            class="category-pill px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border active:scale-95 ${
+            class="category-pill px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border active:scale-95 ${
               cat === currentCategory
-                ? "bg-white text-black border-white font-semibold shadow-sm"
-                : "bg-neutral-900/60 text-neutral-400 border-white/10 hover:text-white hover:border-white/20"
+                ? "bg-white text-black border-white font-semibold"
+                : "bg-neutral-900 text-neutral-400 border-neutral-800 hover:text-white hover:border-neutral-700"
             }"
           >
             ${cat}
@@ -166,20 +223,21 @@
     }
 
     function updateCategoryPills() {
+      if (!categoryFilters) return;
       categoryFilters.querySelectorAll(".category-pill").forEach((pill) => {
         const isSelected = pill.dataset.category === currentCategory && !authorFilter;
         if (isSelected) {
           pill.className =
-            "category-pill px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border bg-white text-black border-white shadow-sm active:scale-95";
+            "category-pill px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer border bg-white text-black border-white active:scale-95";
         } else {
           pill.className =
-            "category-pill px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border bg-neutral-900/60 text-neutral-400 border-white/10 hover:text-white hover:border-white/20 active:scale-95";
+            "category-pill px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border bg-neutral-900 text-neutral-400 border-neutral-800 hover:text-white hover:border-neutral-700 active:scale-95";
         }
       });
     }
 
     // -------------------------------------------------------------
-    // Featured Story
+    // Featured Hero Story
     // -------------------------------------------------------------
     function renderFeaturedStory() {
       if (!heroFeaturedCard) return;
@@ -187,7 +245,7 @@
       const author = authorsData[featured.authorKey] || authorsData.duo;
 
       heroFeaturedCard.innerHTML = `
-        <div class="relative overflow-hidden rounded-3xl glass-panel border border-white/10 hover:border-violet-500/40 transition-all duration-300 group cursor-pointer active:scale-[0.99]">
+        <div class="relative overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 hover:border-violet-500/40 transition-all duration-200 group cursor-pointer active:scale-[0.99]">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
             <div class="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between">
               <div>
@@ -207,7 +265,7 @@
                 </p>
               </div>
 
-              <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+              <div class="pt-4 border-t border-neutral-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <img src="${author.avatar}" alt="${author.name}" class="w-9 h-9 rounded-full object-cover border border-violet-400/40" />
                   <div>
@@ -226,7 +284,7 @@
               <img 
                 src="${featured.coverImage}" 
                 alt="${featured.title}" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-95"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#11131c] lg:via-transparent lg:to-transparent"></div>
             </div>
@@ -235,7 +293,7 @@
       `;
 
       heroFeaturedCard.addEventListener("click", () => {
-        openArticleModal(featured.id);
+        showArticlePage(featured.id);
       });
     }
 
@@ -286,32 +344,31 @@
           return `
           <article 
             data-id="${post.id}"
-            class="card-hover-effect glass-panel rounded-2xl overflow-hidden flex flex-col justify-between border border-white/10 group cursor-pointer active:scale-[0.99] transition-all"
+            class="bg-neutral-900 rounded-2xl overflow-hidden flex flex-col justify-between border border-neutral-800 hover:border-violet-500/40 group cursor-pointer active:scale-[0.99] transition-all"
           >
             <div class="relative overflow-hidden aspect-[16/10]">
               <img 
                 src="${post.coverImage}" 
                 alt="${post.title}" 
                 loading="lazy"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70"></div>
               
-              <span class="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-lg bg-black/70 backdrop-blur text-neutral-200 border border-white/10 font-medium">
+              <span class="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-lg bg-black/80 text-neutral-200 border border-neutral-700 font-medium">
                 ${post.category}
               </span>
 
               <button 
                 data-bookmark="${post.id}"
                 title="Bookmark article"
-                class="bookmark-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70 backdrop-blur border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors z-10 active:scale-90"
+                class="bookmark-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-black/80 border border-neutral-700 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors z-10 active:scale-90"
               >
                 <svg class="w-4 h-4 ${isBookmarked ? "text-violet-400 fill-violet-400" : ""}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                 </svg>
               </button>
 
-              <span class="absolute bottom-3 right-3 text-[10px] text-neutral-300 font-mono bg-black/70 backdrop-blur px-2 py-0.5 rounded">
+              <span class="absolute bottom-3 right-3 text-[10px] text-neutral-300 font-mono bg-black/80 px-2 py-0.5 rounded">
                 ${post.readTime}
               </span>
             </div>
@@ -339,7 +396,7 @@
                     .slice(0, 3)
                     .map(
                       (tag) => `
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-neutral-400 border border-white/5">
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-neutral-700">
                       #${tag}
                     </span>
                   `
@@ -347,9 +404,9 @@
                     .join("")}
                 </div>
 
-                <div class="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                <div class="pt-3 border-t border-neutral-800 flex items-center justify-between text-xs">
                   <div class="flex items-center gap-2">
-                    <img src="${author.avatar}" alt="${author.name}" class="w-5 h-5 rounded-full object-cover border border-white/20" />
+                    <img src="${author.avatar}" alt="${author.name}" class="w-5 h-5 rounded-full object-cover border border-neutral-700" />
                     <span class="text-neutral-300 font-medium text-[11px]">${author.shortName}</span>
                   </div>
 
@@ -369,7 +426,7 @@
         })
         .join("");
 
-      // Bind card actions
+      // Bind article card click handlers
       blogGrid.querySelectorAll("article").forEach((card) => {
         card.addEventListener("click", (e) => {
           if (e.target.closest(".bookmark-btn")) {
@@ -377,13 +434,13 @@
             toggleBookmark(card.dataset.id);
             return;
           }
-          openArticleModal(card.dataset.id);
+          showArticlePage(card.dataset.id);
         });
       });
     }
 
     // -------------------------------------------------------------
-    // Bookmark Toggle
+    // Bookmarks & Claps
     // -------------------------------------------------------------
     function toggleBookmark(id) {
       if (bookmarkedIds.includes(id)) {
@@ -397,74 +454,14 @@
       renderArticles();
     }
 
-    // -------------------------------------------------------------
-    // Article Modal
-    // -------------------------------------------------------------
-    function openArticleModal(id) {
-      const post = blogPosts.find((p) => p.id === id);
-      if (!post || !articleModal) return;
-
-      activeModalArticleId = id;
-      const author = authorsData[post.authorKey] || authorsData.duo;
-      const dynamicClaps = (clappedIds[post.id] || 0) + post.claps;
-
-      if (modalCategory) modalCategory.textContent = post.category;
-      if (modalTitle) modalTitle.textContent = post.title;
-      if (modalDate) modalDate.textContent = post.publishedDate;
-      if (modalReadTime) modalReadTime.textContent = post.readTime;
-      if (modalAuthorAvatar) {
-        modalAuthorAvatar.src = author.avatar;
-        modalAuthorAvatar.alt = author.name;
-      }
-      if (modalAuthorName) modalAuthorName.textContent = author.name;
-      if (modalAuthorRole) modalAuthorRole.textContent = author.role;
-      if (modalCover) {
-        modalCover.src = post.coverImage;
-        modalCover.alt = post.title;
-      }
-      if (modalClapCount) modalClapCount.textContent = dynamicClaps;
-
-      if (modalTags) {
-        modalTags.innerHTML = post.tags
-          .map(
-            (tag) => `
-            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-white/5 text-neutral-300 border border-white/10">
-              #${tag}
-            </span>
-          `
-          )
-          .join("");
-      }
-
-      if (modalContent) modalContent.innerHTML = post.content;
-
-      articleModal.classList.remove("hidden");
-      document.body.classList.add("overflow-hidden");
-
-      const modalInner = articleModal.querySelector(".modal-scroll-body");
-      if (modalInner) modalInner.scrollTop = 0;
-    }
-
-    function closeArticleModal() {
-      if (!articleModal) return;
-      articleModal.classList.add("hidden");
-      document.body.classList.remove("overflow-hidden");
-      activeModalArticleId = null;
-    }
-
-    // -------------------------------------------------------------
-    // Claps
-    // -------------------------------------------------------------
     function handleClap() {
-      if (!activeModalArticleId) return;
-      clappedIds[activeModalArticleId] =
-        (clappedIds[activeModalArticleId] || 0) + 1;
+      if (!activeArticleId) return;
+      clappedIds[activeArticleId] = (clappedIds[activeArticleId] || 0) + 1;
       localStorage.setItem("mandh_claps", JSON.stringify(clappedIds));
 
-      const currentPost = blogPosts.find((p) => p.id === activeModalArticleId);
-      const newCount =
-        currentPost.claps + clappedIds[activeModalArticleId];
-      if (modalClapCount) modalClapCount.textContent = newCount;
+      const currentPost = blogPosts.find((p) => p.id === activeArticleId);
+      const newCount = currentPost.claps + clappedIds[activeArticleId];
+      if (pageArticleClapCount) pageArticleClapCount.textContent = newCount;
 
       showToast("Clapped for story! 👏", "success");
       renderArticles();
@@ -474,9 +471,65 @@
     // Event Binds
     // -------------------------------------------------------------
     function bindEvents() {
-      if (themeToggleBtn) {
-        themeToggleBtn.addEventListener("click", toggleTheme);
+      // Logo click returns to homepage
+      if (brandLogoLink) {
+        brandLogoLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          showHomePage();
+          window.location.hash = "";
+        });
       }
+
+      // Back to stories button on Article Page
+      if (articleBackBtn) {
+        articleBackBtn.addEventListener("click", () => {
+          showHomePage();
+          const blogSection = document.getElementById("stories");
+          if (blogSection) blogSection.scrollIntoView({ behavior: "smooth" });
+        });
+      }
+
+      // Pillar Topic Buttons in Topics Section
+      document.querySelectorAll(".topic-card-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const topic = btn.dataset.topic;
+          currentCategory = topic;
+          authorFilter = null;
+          updateCategoryPills();
+          renderArticles();
+
+          showHomePage();
+          const blogSection = document.getElementById("stories");
+          if (blogSection) blogSection.scrollIntoView({ behavior: "smooth" });
+          showToast(`Filtered stories by ${topic}`, "info");
+        });
+      });
+
+      // Author Bio filter buttons
+      document.querySelectorAll(".author-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          authorFilter = btn.dataset.author;
+          currentCategory = "All";
+          updateCategoryPills();
+          renderArticles();
+
+          showHomePage();
+          const blogSection = document.getElementById("stories");
+          if (blogSection) blogSection.scrollIntoView({ behavior: "smooth" });
+          showToast(`Filtered articles by author`, "info");
+        });
+      });
+
+      // Navigation section links
+      document.querySelectorAll(".nav-section-link, .mobile-nav-link").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (articlePageView && !articlePageView.classList.contains("hidden")) {
+            showHomePage();
+          }
+        });
+      });
+
+      if (themeToggleBtn) themeToggleBtn.addEventListener("click", toggleTheme);
 
       if (searchInput) {
         searchInput.addEventListener("input", (e) => {
@@ -509,41 +562,16 @@
         });
       }
 
-      if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeArticleModal);
+      if (pageArticleClapBtn) pageArticleClapBtn.addEventListener("click", handleClap);
 
-      if (articleModal) {
-        articleModal.addEventListener("click", (e) => {
-          if (e.target === articleModal) closeArticleModal();
-        });
-      }
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && activeModalArticleId) closeArticleModal();
-      });
-
-      if (modalClapBtn) modalClapBtn.addEventListener("click", handleClap);
-
-      if (modalCopyLinkBtn) {
-        modalCopyLinkBtn.addEventListener("click", () => {
-          const url = window.location.origin + window.location.pathname + "#" + activeModalArticleId;
+      if (pageArticleShareBtn) {
+        pageArticleShareBtn.addEventListener("click", () => {
+          const url = window.location.href;
           navigator.clipboard?.writeText(url).then(() => {
-            showToast("Copied link to clipboard!", "success");
+            showToast("Copied article link to clipboard!", "success");
           });
         });
       }
-
-      document.querySelectorAll(".author-filter-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          authorFilter = btn.dataset.author;
-          currentCategory = "All";
-          updateCategoryPills();
-          renderArticles();
-
-          const blogSection = document.getElementById("stories");
-          if (blogSection) blogSection.scrollIntoView({ behavior: "smooth" });
-          showToast(`Filtered articles by author`, "info");
-        });
-      });
 
       if (mobileMenuBtn && mobileMenuDrawer) {
         mobileMenuBtn.addEventListener("click", () => {
@@ -554,6 +582,7 @@
         });
       }
 
+      // Reading progress bar
       window.addEventListener("scroll", () => {
         if (!readingProgressBar) return;
         const scrolled =
@@ -561,7 +590,7 @@
             (document.documentElement.scrollHeight - window.innerHeight)) *
           100;
         readingProgressBar.style.width = scrolled + "%";
-      });
+      }, { passive: true });
 
       if (newsletterForm) {
         newsletterForm.addEventListener("submit", (e) => {
@@ -584,7 +613,7 @@
     }
   }
 
-  // Reliable DOM ready execution
+  // DOM ready execution
   if (document.readyState === "interactive" || document.readyState === "complete") {
     init();
   } else {
