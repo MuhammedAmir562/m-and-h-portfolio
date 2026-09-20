@@ -4,7 +4,6 @@
     // State
     let currentCategory = "All";
     let searchQuery = "";
-    let authorFilter = null;
     let bookmarkedIds = JSON.parse(localStorage.getItem("mandh_bookmarks") || "[]");
     let clappedIds = JSON.parse(localStorage.getItem("mandh_claps") || "{}");
     let activeArticleId = null;
@@ -22,6 +21,7 @@
     const emptyState = document.getElementById("empty-state");
     const resetFiltersBtn = document.getElementById("reset-filters-btn");
     const heroFeaturedCard = document.getElementById("hero-featured-card");
+    const heroTotalCount = document.getElementById("hero-total-count");
 
     // Article Page Elements
     const articleBackBtn = document.getElementById("article-back-btn");
@@ -29,9 +29,6 @@
     const pageArticleTitle = document.getElementById("page-article-title");
     const pageArticleDate = document.getElementById("page-article-date");
     const pageArticleReadtime = document.getElementById("page-article-readtime");
-    const pageArticleAuthorAvatar = document.getElementById("page-article-author-avatar");
-    const pageArticleAuthorName = document.getElementById("page-article-author-name");
-    const pageArticleAuthorRole = document.getElementById("page-article-author-role");
     const pageArticleCover = document.getElementById("page-article-cover");
     const pageArticleTags = document.getElementById("page-article-tags");
     const pageArticleContent = document.getElementById("page-article-content");
@@ -55,11 +52,41 @@
 
     // Initialize
     initTheme();
+    updateDynamicTopicCounts();
     initCategories();
     renderFeaturedStory();
     renderArticles();
     bindEvents();
     checkHashRoute();
+
+    // -------------------------------------------------------------
+    // Dynamic Topic Counts Calculation
+    // -------------------------------------------------------------
+    function updateDynamicTopicCounts() {
+      if (heroTotalCount) {
+        heroTotalCount.textContent = `${blogPosts.length}+`;
+      }
+
+      const counts = {};
+      blogPosts.forEach((post) => {
+        counts[post.category] = (counts[post.category] || 0) + 1;
+      });
+
+      const techAiElem = document.getElementById("topic-count-tech-ai");
+      if (techAiElem) techAiElem.textContent = `${counts["Tech & AI"] || 0} Articles`;
+
+      const cultureDesignElem = document.getElementById("topic-count-culture-design");
+      if (cultureDesignElem) cultureDesignElem.textContent = `${counts["Culture & Design"] || 0} Articles`;
+
+      const creativeDirElem = document.getElementById("topic-count-creative-direction");
+      if (creativeDirElem) creativeDirElem.textContent = `${counts["Creative Direction"] || 0} Article`;
+
+      const mindsetElem = document.getElementById("topic-count-mindset");
+      if (mindsetElem) mindsetElem.textContent = `${counts["Mindset"] || 0} Articles`;
+
+      const deepDivesElem = document.getElementById("topic-count-deep-dives");
+      if (deepDivesElem) deepDivesElem.textContent = `${counts["Deep Dives"] || 0} Article`;
+    }
 
     // -------------------------------------------------------------
     // View Switcher: Home View vs Dedicated Article Page View
@@ -76,19 +103,12 @@
       if (!post || !articlePageView) return;
 
       activeArticleId = id;
-      const author = authorsData[post.authorKey] || authorsData.duo;
       const dynamicClaps = (clappedIds[post.id] || 0) + post.claps;
 
       if (pageArticleCategory) pageArticleCategory.textContent = post.category;
       if (pageArticleTitle) pageArticleTitle.textContent = post.title;
       if (pageArticleDate) pageArticleDate.textContent = post.publishedDate;
       if (pageArticleReadtime) pageArticleReadtime.textContent = post.readTime;
-      if (pageArticleAuthorAvatar) {
-        pageArticleAuthorAvatar.src = author.avatar;
-        pageArticleAuthorAvatar.alt = author.name;
-      }
-      if (pageArticleAuthorName) pageArticleAuthorName.textContent = author.name;
-      if (pageArticleAuthorRole) pageArticleAuthorRole.textContent = author.role;
       if (pageArticleCover) {
         pageArticleCover.src = post.coverImage;
         pageArticleCover.alt = post.title;
@@ -215,7 +235,6 @@
       categoryFilters.querySelectorAll(".category-pill").forEach((pill) => {
         pill.addEventListener("click", () => {
           currentCategory = pill.dataset.category;
-          authorFilter = null;
           updateCategoryPills();
           renderArticles();
         });
@@ -225,7 +244,7 @@
     function updateCategoryPills() {
       if (!categoryFilters) return;
       categoryFilters.querySelectorAll(".category-pill").forEach((pill) => {
-        const isSelected = pill.dataset.category === currentCategory && !authorFilter;
+        const isSelected = pill.dataset.category === currentCategory;
         if (isSelected) {
           pill.className =
             "category-pill px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer border bg-white text-black border-white active:scale-95";
@@ -242,7 +261,6 @@
     function renderFeaturedStory() {
       if (!heroFeaturedCard) return;
       const featured = blogPosts.find((p) => p.featured) || blogPosts[0];
-      const author = authorsData[featured.authorKey] || authorsData.duo;
 
       heroFeaturedCard.innerHTML = `
         <div class="relative overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 hover:border-violet-500/40 transition-all duration-200 group cursor-pointer active:scale-[0.99]">
@@ -266,13 +284,7 @@
               </div>
 
               <div class="pt-4 border-t border-neutral-800 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <img src="${author.avatar}" alt="${author.name}" class="w-9 h-9 rounded-full object-cover border border-violet-400/40" />
-                  <div>
-                    <div class="text-xs font-semibold text-white">${author.name}</div>
-                    <div class="text-[11px] text-neutral-400">${featured.publishedDate}</div>
-                  </div>
-                </div>
+                <span class="text-xs text-neutral-400 font-mono">${featured.publishedDate}</span>
                 <button 
                   class="px-4 py-2 text-xs font-semibold text-white bg-violet-600 hover:bg-violet-500 rounded-xl transition-all shadow-lg shadow-violet-600/20 flex items-center gap-2 active:scale-95"
                 >
@@ -304,17 +316,14 @@
       return blogPosts.filter((post) => {
         const matchesCategory =
           currentCategory === "All" || post.category === currentCategory;
-        const matchesAuthor = !authorFilter || post.authorKey === authorFilter;
         const query = searchQuery.toLowerCase().trim();
         const matchesSearch =
           !query ||
           post.title.toLowerCase().includes(query) ||
           post.excerpt.toLowerCase().includes(query) ||
-          post.tags.some((t) => t.toLowerCase().includes(query)) ||
-          (authorsData[post.authorKey] &&
-            authorsData[post.authorKey].name.toLowerCase().includes(query));
+          post.tags.some((t) => t.toLowerCase().includes(query));
 
-        return matchesCategory && matchesAuthor && matchesSearch;
+        return matchesCategory && matchesSearch;
       });
     }
 
@@ -337,7 +346,6 @@
 
       blogGrid.innerHTML = filtered
         .map((post) => {
-          const author = authorsData[post.authorKey] || authorsData.duo;
           const isBookmarked = bookmarkedIds.includes(post.id);
           const dynamicClaps = (clappedIds[post.id] || 0) + post.claps;
 
@@ -377,8 +385,6 @@
               <div>
                 <div class="flex items-center gap-2 text-xs text-neutral-400 mb-2 font-mono">
                   <span>${post.publishedDate}</span>
-                  <span>•</span>
-                  <span class="text-violet-400 font-medium">${author.name}</span>
                 </div>
 
                 <h3 class="text-lg font-display font-bold text-white group-hover:text-violet-300 transition-colors leading-snug mb-2 line-clamp-2">
@@ -405,19 +411,12 @@
                 </div>
 
                 <div class="pt-3 border-t border-neutral-800 flex items-center justify-between text-xs">
-                  <div class="flex items-center gap-2">
-                    <img src="${author.avatar}" alt="${author.name}" class="w-5 h-5 rounded-full object-cover border border-neutral-700" />
-                    <span class="text-neutral-300 font-medium text-[11px]">${author.shortName}</span>
-                  </div>
-
-                  <div class="flex items-center gap-3">
-                    <span class="flex items-center gap-1 text-neutral-400 font-mono text-[11px]">
-                      👏 ${dynamicClaps}
-                    </span>
-                    <span class="text-violet-400 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 font-semibold text-[11px]">
-                      Read →
-                    </span>
-                  </div>
+                  <span class="flex items-center gap-1 text-neutral-400 font-mono text-[11px]">
+                    👏 ${dynamicClaps}
+                  </span>
+                  <span class="text-violet-400 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 font-semibold text-[11px]">
+                    Read →
+                  </span>
                 </div>
               </div>
             </div>
@@ -471,7 +470,6 @@
     // Event Binds
     // -------------------------------------------------------------
     function bindEvents() {
-      // Logo click returns to homepage
       if (brandLogoLink) {
         brandLogoLink.addEventListener("click", (e) => {
           e.preventDefault();
@@ -480,7 +478,6 @@
         });
       }
 
-      // Back to stories button on Article Page
       if (articleBackBtn) {
         articleBackBtn.addEventListener("click", () => {
           showHomePage();
@@ -489,12 +486,11 @@
         });
       }
 
-      // Pillar Topic Buttons in Topics Section
+      // Pillar Topic Buttons
       document.querySelectorAll(".topic-card-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const topic = btn.dataset.topic;
           currentCategory = topic;
-          authorFilter = null;
           updateCategoryPills();
           renderArticles();
 
@@ -505,22 +501,6 @@
         });
       });
 
-      // Author Bio filter buttons
-      document.querySelectorAll(".author-filter-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          authorFilter = btn.dataset.author;
-          currentCategory = "All";
-          updateCategoryPills();
-          renderArticles();
-
-          showHomePage();
-          const blogSection = document.getElementById("stories");
-          if (blogSection) blogSection.scrollIntoView({ behavior: "smooth" });
-          showToast(`Filtered articles by author`, "info");
-        });
-      });
-
-      // Navigation section links
       document.querySelectorAll(".nav-section-link, .mobile-nav-link").forEach((link) => {
         link.addEventListener("click", () => {
           if (articlePageView && !articlePageView.classList.contains("hidden")) {
@@ -554,7 +534,6 @@
         resetFiltersBtn.addEventListener("click", () => {
           currentCategory = "All";
           searchQuery = "";
-          authorFilter = null;
           if (searchInput) searchInput.value = "";
           if (clearSearchBtn) clearSearchBtn.classList.add("hidden");
           updateCategoryPills();
@@ -582,7 +561,6 @@
         });
       }
 
-      // Reading progress bar
       window.addEventListener("scroll", () => {
         if (!readingProgressBar) return;
         const scrolled =
@@ -613,7 +591,6 @@
     }
   }
 
-  // DOM ready execution
   if (document.readyState === "interactive" || document.readyState === "complete") {
     init();
   } else {
