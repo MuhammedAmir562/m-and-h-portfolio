@@ -1,32 +1,8 @@
-// Blog Posts and Author Data for "M and H" Portfolio Website
+// Expanded Blog Posts Dataset for M and H Portfolio
 const authorsData = {
-  m: {
-    name: "Marcus Vance",
-    shortName: "M",
-    role: "Systems Architect & Tech Essayist",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
-    bio: "Focusing on ambient computing, AI cognition, and zero-latency digital systems. Exploring how machines amplify human capability.",
-    handle: "@marcus_v",
-    articlesCount: 48
-  },
-  h: {
-    name: "Helena Chen",
-    shortName: "H",
-    role: "Creative Director & Cultural Critic",
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80",
-    bio: "Obsessed with editorial design, typography as architecture, and how emerging media reshapes modern culture and storytelling.",
-    handle: "@helena_c",
-    articlesCount: 54
-  },
-  duo: {
-    name: "M & H Collective",
-    shortName: "M & H",
-    role: "Editorial Collaboration",
-    avatar: "https://images.unsplash.com/photo-1522071823991-b9671f9d7f1f?auto=format&fit=crop&w=300&q=80",
-    bio: "Joint explorations synthesizing hard engineering rigor with artistic intuition and humanistic critique.",
-    handle: "@mandh_journal",
-    articlesCount: 22
-  }
+  m: { name: "M & H Journal", shortName: "M & H", role: "Editorial Studio", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" },
+  h: { name: "M & H Journal", shortName: "M & H", role: "Editorial Studio", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" },
+  duo: { name: "M & H Journal", shortName: "M & H", role: "Editorial Studio", avatar: "https://images.unsplash.com/photo-1522071823991-b9671f9d7f1f?auto=format&fit=crop&w=300&q=80" }
 };
 
 const blogPosts = [
@@ -53,7 +29,7 @@ const blogPosts = [
         When computation becomes sufficiently dense and perceptive, the interface becomes an atmosphere rather than a destination. Spatial sensors, localized audio transducers, and context-aware machine learning models operate in the periphery of our consciousness until summoned by intention.
       </p>
 
-      <div class="my-8 p-6 rounded-2xl bg-neutral-900/80 border border-violet-500/20 shadow-inner">
+      <div class="my-8 p-6 rounded-2xl bg-neutral-900 border border-violet-500/20 shadow-inner">
         <blockquote class="text-lg italic text-violet-300 border-l-4 border-violet-500 pl-4 my-2">
           "The most profound technologies are those that disappear. They weave themselves into the fabric of everyday life until they are indistinguishable from it."
         </blockquote>
@@ -64,16 +40,72 @@ const blogPosts = [
       <p class="text-neutral-300 leading-relaxed mb-6">
         In ambient environments, user intent is synthesized from behavioral context. Instead of filing structured database queries, our spaces calibrate temperature, synthesize task queues, and stream context-relevant notes onto physical surfaces as natural extensions of our workflow.
       </p>
+    `
+  },
+  {
+    id: "neural-rendering-3d-revolution",
+    title: "Neural Rendering & The Death of Traditional 3D Pipelines",
+    slug: "neural-rendering-3d-revolution",
+    category: "Tech & AI",
+    authorKey: "m",
+    publishedDate: "Sep 16, 2026",
+    readTime: "7 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Neural Radiance", "NeRF", "3D Graphics", "AI"],
+    claps: 278,
+    excerpt: "How real-time Gaussian splatting and neural radiance fields are rendering traditional polygonal modeling obsolete.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        Polygon counts and UV unwrapping were necessary compromises of 1990s hardware constraints. Today, neural implicit representations allow photorealistic 3D lightfield reconstruction directly from raw sensor captures at 120 FPS.
+      </p>
 
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Key Takeaways for Designers</h3>
-      <ul class="list-disc list-inside space-y-3 text-neutral-300 mb-6">
-        <li><strong class="text-white">Design for the Periphery:</strong> Notification density must decline as cognitive fidelity increases.</li>
-        <li><strong class="text-white">Embrace Physical Anchors:</strong> Real objects act as intuitive mnemonic tokens for complex data streams.</li>
-        <li><strong class="text-white">Latency is the Product:</strong> Sub-5ms response times are essential to avoid uncanny psychological friction.</li>
-      </ul>
+      <h3 class="text-2xl font-bold text-white mt-8 mb-4">From Polygons to Volumetric Splats</h3>
+      <p class="text-neutral-300 leading-relaxed mb-6">
+        By modeling light rays as continuous neural networks rather than rigid geometric meshes, interactive spatial scenes capture sub-millimeter reflections, translucency, and atmospheric scatter effortlessly.
+      </p>
+    `
+  },
+  {
+    id: "local-first-llms-sovereignty",
+    title: "Local-First LLMs: Privacy and Sovereign Personal Cognition",
+    slug: "local-first-llms-sovereignty",
+    category: "Tech & AI",
+    authorKey: "m",
+    publishedDate: "Sep 14, 2026",
+    readTime: "8 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Local AI", "Privacy", "LLM", "Sovereignty"],
+    claps: 412,
+    excerpt: "Why running quantized 7B and 14B models on consumer silicon is essential for intellectual freedom and zero-latency thinking.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        Sending your private thoughts, code drafts, and financial journals over remote API sockets is a Faustian bargain. Small, hyper-optimized local models running on unified device memory give users instant, private intelligence.
+      </p>
 
-      <p class="text-neutral-300 leading-relaxed">
-        As creators and builders, our responsibility is to ensure that as technology recedes into the background, human agency remains squarely in the foreground.
+      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Zero-Latency Feedback Loops</h3>
+      <p class="text-neutral-300 leading-relaxed mb-6">
+        When an AI model responds in 4 milliseconds without network packet delays, it shifts from being a distant web utility into a real-time coprocessor for human thought.
+      </p>
+    `
+  },
+  {
+    id: "synthetic-web-signal-filtering",
+    title: "The Synthetic Web: Filtering Signal From Algorithmic Noise",
+    slug: "synthetic-web-signal-filtering",
+    category: "Tech & AI",
+    authorKey: "m",
+    publishedDate: "Sep 10, 2026",
+    readTime: "5 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Web Architecture", "Information Quality", "Curation"],
+    claps: 350,
+    excerpt: "As automated content floods search indexes, human curation protocols become the ultimate digital filter.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        When the cost of generating text and video drops to absolute zero, web crawlers become choked with low-grade synthetic rehashes. The future of discovery is rooted in web-of-trust human curation networks.
       </p>
     `
   },
@@ -92,23 +124,50 @@ const blogPosts = [
     excerpt: "Why sterile SaaS templates are collapsing under their own monotony, and how raw, high-contrast digital craft is reclaiming creative territory.",
     content: `
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
-        Open ten modern startup landing pages and you will notice a haunting sameness: the same rounded pastel buttons, the same friendly sans-serif heading, the same generic 3D clay figurines float across the screen. We have optimized for conversions at the catastrophic expense of emotion.
+        Open ten modern startup landing pages and you will notice a haunting sameness: the same rounded pastel buttons, the same friendly sans-serif heading. We have optimized for conversions at the catastrophic expense of emotion.
       </p>
 
       <h3 class="text-2xl font-bold text-white mt-8 mb-4">The Rebellion Against Sameness</h3>
       <p class="text-neutral-300 leading-relaxed mb-6">
-        Digital brutalism is not an excuse for bad usability; it is a declaration of presence. Drawing from architectural brutalism of the mid-20th century, it prioritizes honest materials, exposed structure, unvarnished grid lines, and monumental typography over decorative gloss.
+        Digital brutalism is not an excuse for bad usability; it is a declaration of presence. Drawing from architectural brutalism, it prioritizes honest materials, exposed structure, unvarnished grid lines, and monumental typography over decorative gloss.
       </p>
-
-      <div class="my-8 p-6 rounded-2xl bg-neutral-900/80 border border-emerald-500/20">
-        <blockquote class="text-lg italic text-emerald-300 border-l-4 border-emerald-500 pl-4 my-2">
-          "When every website looks like an insurance app, daring to look like an underground art zine is the ultimate competitive advantage."
-        </blockquote>
-      </div>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Structure as Ornament</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        By exposing coordinate markers, visible border rules, and oversized monospace numerals, we remind the reader that the web is a constructed medium. It invites the visitor to touch, explore, and remember what they just witnessed.
+    `
+  },
+  {
+    id: "kinetic-typography-speed",
+    title: "Kinetic Typography and the Micro-Interactions of Speed",
+    slug: "kinetic-typography-speed",
+    category: "Culture & Design",
+    authorKey: "h",
+    publishedDate: "Sep 05, 2026",
+    readTime: "6 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Kinetic Type", "Micro-Interactions", "Motion"],
+    claps: 310,
+    excerpt: "How animated variable fonts and velocity-sensitive type scale transform digital reading into tactile motion.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        Static letterforms are a remnant of print presses. In dynamic viewports, font weight and optical width can morph fluidly in response to scroll velocity and cursor proximity.
+      </p>
+    `
+  },
+  {
+    id: "tactile-digital-interfaces-weight",
+    title: "Tactile Digital Interfaces: Bringing Physical Weight to Pixels",
+    slug: "tactile-digital-interfaces-weight",
+    category: "Culture & Design",
+    authorKey: "h",
+    publishedDate: "Aug 30, 2026",
+    readTime: "5 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Tactile UI", "Haptics", "Design Physics"],
+    claps: 265,
+    excerpt: "Designing digital interfaces with mass, spring inertia, and physical feedback that readers intuitively feel.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        When UI elements respond with natural physical inertia—accelerating, snapping, and dampening like real objects—cognitive fatigue vanishes because the screen matches real-world expectations.
       </p>
     `
   },
@@ -120,30 +179,15 @@ const blogPosts = [
     authorKey: "duo",
     publishedDate: "Aug 28, 2026",
     readTime: "8 min read",
-    featured: true,
+    featured: false,
     coverImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=85",
     tags: ["Future of Work", "Automation", "Strategy", "Solopreneur"],
     claps: 512,
     excerpt: "Dissecting how modern cognitive tooling, multi-agent frameworks, and aesthetic discipline allow single individuals to rival enterprise output.",
     content: `
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
-        In 2015, shipping a high-availability software service required a product manager, three backend engineers, two frontend devs, a QA tester, and an SEO specialist. Today, a solo thinker armed with calibrated agent swarms and architectural clarity can deploy the same system before breakfast.
+        In 2015, shipping a high-availability software service required a product manager, three backend engineers, two frontend devs, a QA tester, and an SEO specialist. Today, a solo thinker armed with calibrated agent swarms can deploy the same system before breakfast.
       </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Cognitive Leverage vs. Headcount</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        Scale in the modern economy is no longer defined by payroll count. It is determined by the speed of the cognitive feedback loop: how rapidly can an insight transition into production code, user testing, and refined narrative?
-      </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">The Triple Threat Operator</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        The individuals thriving in this paradigm master three converging disciplines:
-      </p>
-      <ul class="list-disc list-inside space-y-3 text-neutral-300 mb-6">
-        <li><strong class="text-white">Systems Engineering:</strong> Understanding invariants, data flows, and fault tolerances.</li>
-        <li><strong class="text-white">Editorial Taste:</strong> The ruthless ability to edit, curate, and craft emotionally magnetic narratives.</li>
-        <li><strong class="text-white">Prompt & Agent Architecture:</strong> Directing synthetic intelligence as an orchestra conductor rather than a code monkey.</li>
-      </ul>
     `
   },
   {
@@ -163,11 +207,6 @@ const blogPosts = [
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
         When an architect designs a cathedral, they control the aperture of light, the compression of hallways, and the reverberation of sound. In digital publishing, your type scale and line pacing perform the exact same physical role.
       </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Vertical Rhythm and Cognitive Rest</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        Eye strain is not just a symptom of blue light; it is caused by erratic horizontal jumps and uncalibrated line lengths. By bounding reading columns between 65 and 75 characters and tuning line-height proportionally to viewport scale, the reading experience transforms into a state of effortless flow.
-      </p>
     `
   },
   {
@@ -185,12 +224,7 @@ const blogPosts = [
     excerpt: "When generic synthesis becomes zero-cost, human discernment, idiosyncratic flaws, and distinctive perspective become the ultimate luxury.",
     content: `
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
-        Whenever a technology automates an art form, doomsayers predict its extinction. When photography emerged, painters feared the death of painting—instead, it birthed Impressionism, Cubism, and Abstract Expressionism by liberating artists from mere mimicry.
-      </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">The Value of the Unpromptable</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        What cannot be generated with a generic prompt? Lived trauma, idiosyncratic humor, hyper-local cultural nuances, and radical artistic bravery. As average quality rises to a high statistical baseline, the extraordinary will be defined by human signature.
+        Whenever a technology automates an art form, doomsayers predict its extinction. When photography emerged, painters feared the death of painting—instead, it birthed Impressionism and Cubism by liberating artists from mere mimicry.
       </p>
     `
   },
@@ -209,12 +243,26 @@ const blogPosts = [
     excerpt: "Why the rarest and most profitable cognitive edge in modern creative work is deliberate, uninterrupted stillness.",
     content: `
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
-        We are drowning in algorithmic feeds engineered by thousands of PhDs to capture micro-slices of our dopamine. The default state of the modern professional is chronic, fragmented hyper-arousal.
+        We are drowning in algorithmic feeds engineered by thousands of PhDs to capture micro-slices of our dopamine. The default state of the modern professional is chronic, fragmented hyper-arousal. True synthesis requires incubation.
       </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">The Asymmetric Advantage of Stillness</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        If you consume what everyone else consumes, you will produce what everyone else produces. True synthesis requires incubation: hours where zero new inputs enter your cortex, allowing subconscious associations to crystallize into original theorems.
+    `
+  },
+  {
+    id: "deep-focus-attention-battlefield",
+    title: "Deep Focus in an Attention-Economy Battlefield",
+    slug: "deep-focus-attention-battlefield",
+    category: "Mindset",
+    authorKey: "duo",
+    publishedDate: "Jul 02, 2026",
+    readTime: "6 min read",
+    featured: false,
+    coverImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=85",
+    tags: ["Attention", "Deep Work", "Mindset", "Focus"],
+    claps: 388,
+    excerpt: "Tactical cognitive hygiene protocols for reclaiming 4-hour deep focus blocks in a hyper-interrupted work environment.",
+    content: `
+      <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
+        Attention is the foundational currency of human agency. Guarding your primary morning focus window from notification intrusions is the single highest ROI habit in modern knowledge work.
       </p>
     `
   },
@@ -235,11 +283,6 @@ const blogPosts = [
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
         Generating ten thousand high-resolution cinematic frames now costs fractions of a cent. But ten thousand frames without an editorial compass is merely sensory noise.
       </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Curation as Creative Supremacy</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        The modern creative director is no longer just a maker of raw assets. They are an editor of reality, setting the aesthetic boundaries, the moral tone, and the emotional resonance that binds disparate artifacts into an enduring universe.
-      </p>
     `
   },
   {
@@ -258,11 +301,6 @@ const blogPosts = [
     content: `
       <p class="lead text-lg md:text-xl text-neutral-300 font-light leading-relaxed mb-6">
         A 100 millisecond delay is the threshold where a human brain perceives lag as a disconnect in causality. When software responds under 16 milliseconds, it feels like an organic extension of thought itself.
-      </p>
-
-      <h3 class="text-2xl font-bold text-white mt-8 mb-4">Local-First and Optimistic Mutations</h3>
-      <p class="text-neutral-300 leading-relaxed mb-6">
-        Waiting on round-trip network packets before updating client interfaces is a relic of legacy architecture. Modern apps must execute mutations optimistically on local state, reconciliation happening asynchronously in background channels.
       </p>
     `
   }
